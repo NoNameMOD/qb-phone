@@ -225,7 +225,7 @@ QBCore.Functions.CreateCallback('qb-phone:server:GetPhoneData', function(source,
         end
 
         local Tweets = MySQL.Sync.fetchAll('SELECT * FROM phone_tweets WHERE `date` > NOW() - INTERVAL ? hour', {Config.TweetDuration})
-        
+
         if Tweets ~= nil and next(Tweets) ~= nil then
             PhoneData.Tweets = Tweets
             TWData = Tweets
@@ -520,7 +520,7 @@ QBCore.Functions.CreateCallback('qb-phone:server:CanTransferMoney', function(sou
     end
     iban = newiban
     amount = tonumber(newAmount)
-    
+
     local Player = QBCore.Functions.GetPlayer(source)
     if (Player.PlayerData.money.bank - amount) >= 0 then
         local query = '%"account":"' .. iban .. '"%'
@@ -796,7 +796,7 @@ RegisterNetEvent('qb-phone:server:DeleteTweet', function(tweetId)
         local Data2 = MySQL.Sync.fetchAll('DELETE FROM phone_tweets WHERE tweetId = ?', {TID})
         delete = true
     end
-    
+
     if delete then
         delete = not delete
         for k, v in pairs(TWData) do
@@ -811,17 +811,17 @@ end)
 RegisterNetEvent('qb-phone:server:UpdateTweets', function(NewTweets, TweetData)
     local src = source
     if Config.Linux then
-	local InsertTweet = MySQL.Async.insert('INSERT INTO phone_tweets (citizenid, firstName, lastName, message, date, url, picture, tweetid) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', {
-	TweetData.citizenid,
-	TweetData.firstName,
-	TweetData.lastName,
-	TweetData.message,
-	TweetData.date,
-	TweetData.url:gsub("[%<>"'()' '$]",""),
-	TweetData.picture,
-	TweetData.tweetId
-	})
-	TriggerClientEvent('qb-phone:client:UpdateTweets', -1, src, NewTweets, TweetData, false)
+        local InsertTweet = MySQL.Async.insert('INSERT INTO phone_tweets (citizenid, firstName, lastName, message, date, url, picture, tweetid) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', {
+            TweetData.citizenid,
+            TweetData.firstName,
+            TweetData.lastName,
+            TweetData.message,
+            TweetData.date,
+            TweetData.url:gsub("[%<>\"()\' $]",""),
+            TweetData.picture,
+            TweetData.tweetId
+        })
+        TriggerClientEvent('qb-phone:client:UpdateTweets', -1, src, NewTweets, TweetData, false)
     else
         local InsertTweet = MySQL.Async.insert('INSERT INTO phone_tweets (citizenid, firstName, lastName, message, date, url, picture, tweetid) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', {
             TweetData.citizenid,
@@ -829,7 +829,7 @@ RegisterNetEvent('qb-phone:server:UpdateTweets', function(NewTweets, TweetData)
             TweetData.lastName,
             TweetData.message,
             TweetData.date,
-            TweetData.url:gsub("[%<>"'()' '$]",""),
+            TweetData.url:gsub("[%<>\"()\' $]",""),
             TweetData.picture,
             TweetData.tweetId
         })
@@ -949,32 +949,16 @@ RegisterNetEvent('qb-phone:server:AddRecentCall', function(type, data)
 end)
 
 RegisterNetEvent('qb-phone:server:CancelCall', function(ContactData)
--- Saltychat
-    local src = source
-    local Play = QBCore.Functions.GetPlayer(src)
--- Saltychat
     local Ply = QBCore.Functions.GetPlayerByPhone(ContactData.TargetData.number)
     if Ply ~= nil then
         TriggerClientEvent('qb-phone:client:CancelCall', Ply.PlayerData.source)
--- Saltychat
-        exports['saltychat']:EndCall(Play.PlayerData.source, Ply.PlayerData.source)
-        exports['saltychat']:EndCall(Ply.PlayerData.source, Play.PlayerData.source)   
--- Saltychat
     end
 end)
 
 RegisterNetEvent('qb-phone:server:AnswerCall', function(CallData)
--- Saltychat
-    local src = source
-    local Play = QBCore.Functions.GetPlayer(src)
--- Saltychat
     local Ply = QBCore.Functions.GetPlayerByPhone(CallData.TargetData.number)
     if Ply ~= nil then
         TriggerClientEvent('qb-phone:client:AnswerCall', Ply.PlayerData.source)
--- Saltychat
-        exports['saltychat']:EstablishCall(Play.PlayerData.source, Ply.PlayerData.source)
-        exports['saltychat']:EstablishCall(Ply.PlayerData.source, Play.PlayerData.source)
--- Saltychat
     end
 end)
 
