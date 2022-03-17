@@ -811,7 +811,7 @@ end)
 RegisterNetEvent('qb-phone:server:UpdateTweets', function(NewTweets, TweetData)
     local src = source
     if Config.Linux then
-        local InsertTweet = MySQL.Async.insert('INSERT INTO phone_tweets (citizenid, firstName, lastName, message, date, url, picture, tweetid) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', {
+        local InsertTweet = MySQL.Async.insert('INSERT INTO phone_tweets (citizenid, firstName, lastName, message, date, url, picture, tweetid) VALUES (?, ?, ?, ?, now(), ?, ?, ?)', {
             TweetData.citizenid,
             TweetData.firstName,
             TweetData.lastName,
@@ -823,7 +823,7 @@ RegisterNetEvent('qb-phone:server:UpdateTweets', function(NewTweets, TweetData)
         })
         TriggerClientEvent('qb-phone:client:UpdateTweets', -1, src, NewTweets, TweetData, false)
     else
-        local InsertTweet = MySQL.Async.insert('INSERT INTO phone_tweets (citizenid, firstName, lastName, message, date, url, picture, tweetid) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', {
+        local InsertTweet = MySQL.Async.insert('INSERT INTO phone_tweets (citizenid, firstName, lastName, message, date, url, picture, tweetid) VALUES (?, ?, ?, ?, now(), ?, ?, ?)', {
             TweetData.citizenid,
             TweetData.firstName,
             TweetData.lastName,
@@ -949,16 +949,32 @@ RegisterNetEvent('qb-phone:server:AddRecentCall', function(type, data)
 end)
 
 RegisterNetEvent('qb-phone:server:CancelCall', function(ContactData)
+-- Saltychat
+    local src = source
+    local Play = QBCore.Functions.GetPlayer(src)
+-- Saltychat
     local Ply = QBCore.Functions.GetPlayerByPhone(ContactData.TargetData.number)
     if Ply ~= nil then
         TriggerClientEvent('qb-phone:client:CancelCall', Ply.PlayerData.source)
+-- Saltychat
+        exports['saltychat']:EndCall(Play.PlayerData.source, Ply.PlayerData.source)
+        exports['saltychat']:EndCall(Ply.PlayerData.source, Play.PlayerData.source)   
+-- Saltychat
     end
 end)
 
 RegisterNetEvent('qb-phone:server:AnswerCall', function(CallData)
+-- Saltychat
+    local src = source
+    local Play = QBCore.Functions.GetPlayer(src)
+-- Saltychat
     local Ply = QBCore.Functions.GetPlayerByPhone(CallData.TargetData.number)
     if Ply ~= nil then
         TriggerClientEvent('qb-phone:client:AnswerCall', Ply.PlayerData.source)
+-- Saltychat
+        exports['saltychat']:EstablishCall(Play.PlayerData.source, Ply.PlayerData.source)
+        exports['saltychat']:EstablishCall(Ply.PlayerData.source, Play.PlayerData.source)
+-- Saltychat
     end
 end)
 
