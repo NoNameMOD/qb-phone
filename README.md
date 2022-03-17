@@ -9,11 +9,12 @@ modified by Thodde26
 
 ## server.cfg
 ```
+ensure pma-voice
 ensure saltychat 
 ensure saltyhud
 ```
 
-pma-voice is deactivated
+pma-voice must be activated
 
 # qb-phone
 Advanced Phone for QB-Core Framework :iphone:
